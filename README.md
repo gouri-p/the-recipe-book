@@ -1,2 +1,2 @@
 # HomeChoreServices
-%th semester mini project using MERN
+5th semester mini project using MERN
