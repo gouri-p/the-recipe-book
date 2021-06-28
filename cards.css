@@ -1,0 +1,45 @@
+div.body{
+    background-color: whitesmoke;
+}
+
+.cards{
+    margin: 0 auto;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 20px;
+    font-family: sans-serif;
+}
+
+.card{
+    box-shadow: 0 0 3px rgba(red, green, blue, alpha);
+    background-color: whitesmoke;
+}
+
+.card__image{
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.card_info{
+    line-height: 1.5;
+    font-size: 0.9em;
+    padding: #fafafa;
+    background-color: whitesmoke;
+}
+
+.card_footer>p:first-of-type{
+    margin-top: 0;
+}
+
+.card_footer>p:last-of-type{
+    margin-bottom: 0;
+}
+
+.card_footer>p:last-of-type{
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    background-color: whitesmoke;
+}
