@@ -1,0 +1,110 @@
+<?php
+session_start();
+?>
+<?php
+
+require_once "pdo.php";
+$failure = false;
+$success = false;
+
+if (!isset($_SESSION['email']))
+{
+    header('Location: login.php');
+}
+elseif (isset($_POST['logout']) && $_POST['logout'] == 'Logout')
+{
+    header('Location: logout.php');
+}
+$email=$_SESSION['email'];
+$stmt = $pdo->query("SELECT id,recipi,ingrediants,steps,foodfile,tips FROM recipies where email='$email'");
+$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="cards.css"><link rel="stylesheet" href="project.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <?php require_once "bootstrap.php"; ?>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
+    <title>my reciepies</title>
+</head>
+<body class="body">
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script>
+  function myDelete(id){
+    $.ajax({
+      type: 'POST',
+      url: 'myrecipies.php',
+      data: {'id': id},
+    });
+    
+    <?php
+    $id = $_POST['id'];
+    $stmt = $pdo->query("delete FROM recipies where email='$email' and id='$id'"); 
+    $success="Recipe deleted";
+    
+    ?>
+  }
+  
+  </script>
+  <div class="sidebar">
+   <header>
+   <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+   <a class="navbar-brand text-white" href="/the_recipi_book/home.php">Home</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand text-white" href="/the_recipi_book/postrecipi.php">New Recipe</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand text-white" href="/the_recipi_book/myrecipies.php">My Recipe</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand text-white" href="/the_recipi_book/logout.php">Logout</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  
+   </nav>
+   </header>
+ </div>
+<div class="container">
+    <h1 class="text-white"><u>My Recipies</u></h1>
+    </br>
+    <?php
+    if (isset($_SESSION['error']))
+    {
+        echo('<h6 class="text-info row col-md-8 offset-md-4">' . htmlentities($_SESSION['error']) . "</h6>\n");
+        unset($_SESSION['error']);
+    }
+    ?>
+    <div class="cards">
+        <?php
+        if(count($rows) == 0){
+          $_SESSION['error']="no recipies found.";
+        }else{
+          foreach ($rows as $row)
+        {
+            echo '<div class="card" style="width: 20rem;">';
+            echo '<img class="card__image" src="image/'.$row['foodfile'].'" >';
+            echo '<div class="body">';
+            echo '<div class="card_info">';
+            echo '<h3 class="card-title"><b>'.$row['recipi'].'</b></h3>';
+            echo '</div>';
+            echo '<p><div class="card_footer">';
+            echo '&nbsp; &nbsp;<a href="view.php?recipi='.$row['recipi'].'" class="btn bg-wite text-black border-dark"/>view recipi</a>&nbsp; &nbsp;';
+            echo '<button class="btn bg-wite text-black border-dark" onclick="delete('.$row['id'].')" id="delete">Delete</button>';
+            echo '</div></p>';
+            echo '</div>';
+            echo '</div>';
+        };
+        }
+        ?>
+        </div>
+</div>
+</body>
